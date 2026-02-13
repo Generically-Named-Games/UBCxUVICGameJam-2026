@@ -7,8 +7,22 @@ Tower table holds all the active towers(might need a rename)
 towerUnit refers to an object in that table
 name refers to the name of each tower template that is used to identify them
 ]]
+Tower.__index = Tower
 
-function Tower.findTarget(towerUnit, range, mode) -- unfinished, need distance along the path
+function Tower.new(name, position)
+	local instance = setmetatable({}, Tower)
+
+	instance.id = name
+	instance.stats = TowerData[name]
+	instance.position = position
+	instance.targetMode = "first"
+
+	return instance
+end
+
+Tower.active = {}
+
+function Tower:findTarget(range, mode) -- unfinished, need distance along the path
 	mode = mode or "first"
 	local bestTarget = nil
 
@@ -20,7 +34,7 @@ function Tower.findTarget(towerUnit, range, mode) -- unfinished, need distance a
 
 	local attackers --placeholder
 	for i, target in ipairs(attackers) do
-		local distance = Vector2.sub(towerUnit, target)
+		local distance = Vector2.sub(self.position, target.position) --need magnitude maybe make vector2 func
 		--local pathDistance = [target position along map path], best/worst distance should be based on this
 
 		if distance < range then --implement modes: first, last, closest, strongest, weakest
@@ -45,14 +59,14 @@ function Tower.findTarget(towerUnit, range, mode) -- unfinished, need distance a
 	return bestTarget
 end
 
-function Tower.attack(towerUnit, enemy) -- expects enemy death logic
+function Tower:attack(enemy) -- expects enemy death logic
 	if enemy.health <= 0 then
 		return
 	end
-	if towerUnit.stats.onHit then --no onhits yet but will be useful probably
-		towerUnit.stats.onHit(enemy, towerUnit)
+	if self.stats.onHit then --no onhits yet but will be useful probably
+		self.stats.onHit(enemy, self)
 	else
-		enemy.health = enemy.health - towerUnit.stats.attack
+		enemy.health = enemy.health - self.stats.attack
 		if enemy.health <= 0 then
 			--enemy death logic
 		end
@@ -63,35 +77,20 @@ function Tower.canPlace(name, position) --wip, dont know how to check map tiles
 	local towerSize = TowerData[name].size
 	if towerSize then
 		--check if tiles are empty and valid for placement
+		--check if player can afford/ other restrictions on placement
 	end
 end
 
 function Tower.spawn(name, position)
 	if Tower.canPlace(name, position) then
-		local stats = TowerData[name]
-		if not stats then
-			error("unable to find unknown tower: " .. tostring(name))
-		end
-		local newTower = {
-			id = name,
-			stats = stats,
-			position = position,
-			targetMode = "first",
-			--maybe add upgrade level or other non-default attributes
-		}
-		table.insert(Tower, newTower)
+		local newTower = Tower.new(name, position) -- Use the constructor!
+		table.insert(Tower.active, newTower)
+
+		--add cost logic once thats figured out
 	end
+	return nil
 end
 
-function Tower.remove(towerUnit)
-	local removed = false
-	for key, value in pairs(Tower) do
-		if value == towerUnit then
-			table.remove(Tower, towerUnit)
-			removed = true
-		end
-	end
-	if not removed then
-		error("unable to remove tower: " .. tostring(towerUnit.id))
-	end
+function Tower:remove() --just makes a flag so it can be cleaned up in the update loop
+	self.isDead = true
 end
