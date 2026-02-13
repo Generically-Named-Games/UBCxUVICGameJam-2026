@@ -4,7 +4,7 @@ local TM = require("/services/tween_manager").new()
 
 local dimensions = {
 	X = 0,
-	Y = 300,
+	Y = 400,
 }
 
 function love.draw()
