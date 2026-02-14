@@ -2,11 +2,7 @@ local Vector2 = require("/classes/vector2")
 local TowerData = require("/data/towers")
 
 local Tower = {}
---[[
-Tower table holds all the active towers(might need a rename) 
-towerUnit refers to an object in that table
-name refers to the name of each tower template that is used to identify them
-]]
+
 Tower.__index = Tower
 
 function Tower.new(name, position)
@@ -20,10 +16,8 @@ function Tower.new(name, position)
 	return instance
 end
 
-Tower.active = {}
-
-function Tower:findTarget(range, mode) -- unfinished, need distance along the path
-	mode = mode or "first"
+function Tower:findTarget(range) -- unfinished, need distance along the path
+	local mode = self.mode or "first"
 	local bestTarget = nil
 
 	local closestDistance
@@ -63,13 +57,11 @@ function Tower:attack(enemy) -- expects enemy death logic
 	if enemy.health <= 0 then
 		return
 	end
-	if self.stats.onHit then --no onhits yet but will be useful probably
-		self.stats.onHit(enemy, self)
-	else
-		enemy.health = enemy.health - self.stats.attack
-		if enemy.health <= 0 then
-			--enemy death logic
-		end
+	-- if self.stats.onHit then --no onhits yet but will be useful probably
+	-- 	self.stats.onHit(enemy, self)
+	enemy.health = enemy.health - self.stats.attack
+	if enemy.health <= 0 then
+		--enemy death logic
 	end
 end
 
@@ -83,8 +75,8 @@ end
 
 function Tower.spawn(name, position)
 	if Tower.canPlace(name, position) then
-		local newTower = Tower.new(name, position) -- Use the constructor!
-		table.insert(Tower.active, newTower)
+		local newTower = Tower.new(name, position)
+		--table.insert(list of towers, newTower)
 
 		--add cost logic once thats figured out
 	end
