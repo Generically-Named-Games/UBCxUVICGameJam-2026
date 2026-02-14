@@ -10,15 +10,15 @@ function Vector2.new(x, y)
 	return instance
 end
 
--- function Vector2:add(other)
---     return Vector2.new(self.X + other.X, self.Y + other.Y)
--- end
--- Vector2.__add = Vector2.add
+function Vector2:add(other)
+	return Vector2.new(self.X + other.X, self.Y + other.Y)
+end
+Vector2.__add = Vector2.add
 
--- function Vector2:sub(other)
---     return Vector2.new(self.X - other.X, self.Y - other.Y)
--- end
--- Vector2.__sub = Vector2.sub
+function Vector2:sub(other)
+	return Vector2.new(self.X - other.X, self.Y - other.Y)
+end
+Vector2.__sub = Vector2.sub
 
 function Vector2:__tostring()
 	return "(" .. self.X .. ", " .. self.Y .. ")"
