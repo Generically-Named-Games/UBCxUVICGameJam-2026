@@ -24,4 +24,9 @@ function Vector2:__tostring()
 	return "(" .. self.X .. ", " .. self.Y .. ")"
 end
 
+-- The length of the Vector2
+function Vector2:len()
+	return math.sqrt(self.X * self.X + self.Y + self.Y)
+end
+
 return Vector2
