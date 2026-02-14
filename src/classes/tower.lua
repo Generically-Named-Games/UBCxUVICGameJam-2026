@@ -16,7 +16,7 @@ function Tower.new(name, position)
 	return instance
 end
 
-function Tower:findTarget(range) -- unfinished, need distance along the path
+function Tower:findTarget() -- unfinished, need distance along the path
 	local mode = self.mode or "first"
 	local bestTarget = nil
 
@@ -31,7 +31,7 @@ function Tower:findTarget(range) -- unfinished, need distance along the path
 		local distance = Vector2.sub(self.position, target.position) --need magnitude maybe make vector2 func
 		--local pathDistance = [target position along map path], best/worst distance should be based on this
 
-		if distance < range then --implement modes: first, last, closest, strongest, weakest
+		if distance < self.stats.range then --implement modes: first, last, closest, strongest, weakest
 			if mode == "closest" then
 				if not closestDistance or distance < closestDistance then
 					closestDistance = distance
