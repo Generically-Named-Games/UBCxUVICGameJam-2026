@@ -10,7 +10,7 @@ jobs:
         love_version: ['11.5']
     steps:
     - uses: actions/checkout@v6
-    - uses: nhartland/love-build@v1
+    - uses: ./ # User current branch
       id: love-build
       with:
         app_name: 'game'
@@ -36,6 +36,4 @@ jobs:
     - uses: actions/upload-artifact@v6
       with:
         name: hw_linux_x86_64-build-${{ matrix.love_version}}
-
         path: ${{ steps.love-build.outputs.linux_x86_64-filename }}
-
