@@ -90,7 +90,7 @@ local function find(table, element)
 end
 
 -- Callback function used by the TweenManager to update the state of all tweens each frame. Should be called from within love.draw()!
-function TweenManager:update()
+function TweenManager:update(dt)
 	for i, t in pairs(self._active) do
 		if t.PlaybackState == "Cancelled" then
 			table.remove(self._active, i)
