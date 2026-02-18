@@ -1,7 +1,6 @@
--- MODULES
 local sti = require("sti")
 local map_functions = require("map_functions")
-local TM = require("/services/tween_manager").new()
+local TweenManager = require("/services/tween_manager") ---@type TweenManager
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local lick = require("lick")

@@ -1,8 +1,9 @@
--- MODULES
 local Event = require("/classes/event")
+
 --------------------------------------------------------------------------------
 -- PRIVATE TWEEN CLASS (TO BE USED IN THIS FILE ONLY!)
 --------------------------------------------------------------------------------
+
 ---@class Tween
 ---@field PlaybackState string
 ---@field Completed Event
@@ -57,16 +58,19 @@ end
 function Tween:Cancel()
 	self.PlaybackState = "Cancelled"
 end
+
 --------------------------------------------------------------------------------
 -- PUBLIC TWEENMANAGER CLASS
 --------------------------------------------------------------------------------
+
+---Manages active tweens! You can create a new tween with TM:Create(). Requires TM:update() in love:draw()
 ---@class TweenManager
 ---@field private _active table
 ---@field private _instancesUpdatedThisFrame table
 local TweenManager = {}
 TweenManager.__index = TweenManager
 
----Creates a new TweenManager object. Should be treated as a singleton; however, it is not enforced.
+---Creates a new TweenManager object
 function TweenManager.new()
 	local instance = setmetatable({}, TweenManager)
 
@@ -148,4 +152,4 @@ function TweenManager:add(tween)
 	table.insert(self._active, tween)
 end
 
-return TweenManager
+return TweenManager.new()
