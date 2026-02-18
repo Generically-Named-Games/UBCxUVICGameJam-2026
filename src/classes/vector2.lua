@@ -20,13 +20,18 @@ function Vector2:sub(other)
 end
 Vector2.__sub = Vector2.sub
 
+function Vector2:mul(other)
+	return Vector2.new(self.X * other, self.Y * other)
+end
+Vector2.__mul = Vector2.mul
+
 function Vector2:__tostring()
 	return "(" .. self.X .. ", " .. self.Y .. ")"
 end
 
 -- The length of the Vector2
 function Vector2:len()
-	return math.sqrt(self.X * self.X + self.Y + self.Y)
+	return math.sqrt(self.X * self.X + self.Y * self.Y)
 end
 
 return Vector2
