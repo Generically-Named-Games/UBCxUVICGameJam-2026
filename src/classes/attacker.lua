@@ -39,7 +39,7 @@ end
 
 function Attacker:draw()
 	love.graphics.setColor(1, 0, 0) -- Red enemy
-	love.graphics.circle("fill", self.x, self.y, 10)
+	love.graphics.circle("fill", self.x, self.y / 2, 10)
 	love.graphics.setColor(1, 1, 1) -- Reset color
 end
 
