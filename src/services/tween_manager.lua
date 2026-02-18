@@ -1,8 +1,20 @@
--- MODULES
 local Event = require("/classes/event")
+
 --------------------------------------------------------------------------------
 -- PRIVATE TWEEN CLASS (TO BE USED IN THIS FILE ONLY!)
 --------------------------------------------------------------------------------
+
+---@class Tween
+---@field PlaybackState string
+---@field Completed Event
+---@field private _manager TweenManager
+---@field private _target table
+---@field private _duration number
+---@field private _maxDuration number
+---@field private _propertyName string
+---@field private _start any
+---@field private _endGoal any
+---@field private _easingStyle string?
 local Tween = {}
 Tween.__index = Tween
 
@@ -29,7 +41,7 @@ function Tween.new(manager, target, duration, propertyName, endGoal, easingStyle
 	return instance
 end
 
--- Starts playback of a tween. Note that if playback has already started, calling Play() has no effect unless the tween has finished or is stopped (either by Tween:Cancel() or Tween:Pause()).
+---Starts playback of a tween. Note that if playback has already started, calling Play() has no effect unless the tween has finished or is stopped (either by Tween:Cancel() or Tween:Pause()).
 function Tween:Play()
 	if self._duration >= self._maxDuration then
 		self._duration = 0
@@ -37,22 +49,28 @@ function Tween:Play()
 	self._manager:add(self)
 end
 
--- Halts playback of the tween. Doesn't reset its progress variables, meaning that if you call Tween:Play(), the tween resumes playback from the moment it was paused.
+---Halts playback of the tween. Doesn't reset its progress variables, meaning that if you call Tween:Play(), the tween resumes playback from the moment it was paused.
 function Tween:Pause()
 	self.PlaybackState = "Paused"
 end
 
--- Halts playback and resets the tween variables. If you then call Tween:Play(), the properties of the tween resume interpolating towards their destination, but take the full length of the animation to do so.
+---Halts playback and resets the tween variables. If you then call Tween:Play(), the properties of the tween resume interpolating towards their destination, but take the full length of the animation to do so.
 function Tween:Cancel()
 	self.PlaybackState = "Cancelled"
 end
+
 --------------------------------------------------------------------------------
 -- PUBLIC TWEENMANAGER CLASS
 --------------------------------------------------------------------------------
+
+---Manages active tweens! You can create a new tween with TM:Create(). Requires TM:update() in love:draw()
+---@class TweenManager
+---@field private _active table
+---@field private _instancesUpdatedThisFrame table
 local TweenManager = {}
 TweenManager.__index = TweenManager
 
--- Creates a new TweenManager object. Should be treated as a singleton; however, it is not enforced.
+---Creates a new TweenManager object
 function TweenManager.new()
 	local instance = setmetatable({}, TweenManager)
 
@@ -62,7 +80,12 @@ function TweenManager.new()
 	return instance
 end
 
--- Creates a new Tween given the object whose properties are to be tweened, a TweenInfo, and a dictionary of goal property values.
+---Creates a new Tween given the object whose properties are to be tweened, a TweenInfo, and a dictionary of goal property values.
+---@param target table
+---@param duration number
+---@param propertyName string
+---@param endGoal any
+---@param easingStyle string?
 function TweenManager:Create(target, duration, propertyName, endGoal, easingStyle)
 	local newTween = Tween.new(self, target, duration, propertyName, endGoal, easingStyle)
 	return newTween
@@ -89,8 +112,8 @@ local function find(table, element)
 	end
 end
 
--- Callback function used by the TweenManager to update the state of all tweens each frame. Should be called from within love.draw()!
-function TweenManager:update(dt)
+---Callback function used by the TweenManager to update the state of all tweens each frame. Should be called from within love.draw()!
+function TweenManager:update()
 	for i, t in pairs(self._active) do
 		if t.PlaybackState == "Cancelled" then
 			table.remove(self._active, i)
@@ -122,8 +145,10 @@ function TweenManager:update(dt)
 	self._instancesUpdatedThisFrame = {}
 end
 
+---Private method for adding Tween to active table
+---@param tween Tween
 function TweenManager:add(tween)
 	table.insert(self._active, tween)
 end
 
-return TweenManager
+return TweenManager.new()
