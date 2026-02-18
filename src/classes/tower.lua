@@ -13,6 +13,7 @@ function Tower.new(name, position)
 	instance.stats = TowerData[name]
 	instance.position = position
 	instance.targetMode = "first"
+	instance.attackTimer = 0
 
 	instance.selected = false
 
@@ -31,21 +32,27 @@ function Tower.new(name, position)
 	return instance
 end
 
-function Tower:findTarget() -- unfinished, need distance along the path
-	local mode = self.mode or "first"
+function Tower:findTarget(activeEnemies) -- modes need to be tested
+	local mode = self.targetMode or "first"
 	local bestTarget = nil
-
 	local closestDistance
 	local bestDistance = nil
 	local worstDistance = nil
 	local bestHealth = nil
 	local worstHealth = nil
-	local towerVec = Vector2.new(self.position.x, self.position.y)
-	local attackers --placeholder
-	for i, target in ipairs(attackers) do
-		local enemyVec = Vector2.new(target.x, target.y)
-		local distance = towerVec:sub(enemyVec):len()
-		--local pathDistance = [target position along map path], best/worst distance should be based on this
+	local towerVector = Vector2.new(self.position.x, self.position.y)
+
+	for _, target in ipairs(activeEnemies) do
+		local enemyVector = Vector2.new(target.x, target.y)
+		local distance = (towerVector - enemyVector):len()
+
+		local nextEndPoint = target.path[target.endPoint + 1]
+		local pathDistance = 0
+
+		if nextEndPoint then
+			local nexPointVector = Vector2.new(nextEndPoint.x, nextEndPoint.y)
+			pathDistance = (enemyVector - nexPointVector):len() --distance to next point on path
+		end
 
 		if distance < self.stats.range then --implement modes: first, last, closest, strongest, weakest
 			if mode == "closest" then
@@ -63,6 +70,16 @@ function Tower:findTarget() -- unfinished, need distance along the path
 					worstHealth = target.health
 					bestTarget = target
 				end
+			elseif mode == "first" then
+				if not bestDistance or bestDistance > pathDistance then
+					bestDistance = pathDistance
+					bestTarget = target
+				end
+			elseif mode == "last" then
+				if not worstDistance or worstDistance < pathDistance then
+					worstDistance = pathDistance
+					bestTarget = target
+				end
 			end
 		end
 	end
@@ -76,9 +93,6 @@ function Tower:attack(enemy) -- expects enemy death logic
 	-- if self.stats.onHit then --no onhits yet but will be useful probably
 	-- 	self.stats.onHit(enemy, self)
 	enemy.health = enemy.health - self.stats.attack
-	if enemy.health <= 0 then
-		--enemy death logic
-	end
 end
 
 function Tower.canPlace(name, position) --wip, dont know how to check map tiles
@@ -103,7 +117,7 @@ function Tower:remove() --just makes a flag so it can be cleaned up in the updat
 	self.isDead = true
 end
 
-function Tower:update(dt) -- add cooldowns and put attack into this func
+function Tower:update(dt, activeEnemies)
 	--will be used for animations with multiple sprites
 	--self.animationTimer = self.animationTimer + dt
 
@@ -114,10 +128,14 @@ function Tower:update(dt) -- add cooldowns and put attack into this func
 	--         self.activeFrame = 1
 	--     end
 	-- end
+	self.attackTimer = self.attackTimer + dt
 
-	--reimplement soon but breaks game rn
-	-- local target = Tower:findTarget()
-	-- Tower:attack(target)
+	local target = self:findTarget(activeEnemies)
+	if target and self.attackTimer > self.stats.cooldown then
+		self:attack(target)
+		self.attackTimer = 0
+	end
+
 	self.button:update(dt)
 end
 

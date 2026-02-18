@@ -36,11 +36,16 @@ function love.load()
 end
 
 function love.update(dt)
-	for _, t in ipairs(towers) do
-		t:update(dt)
-	end
 	for _, e in ipairs(enemies) do
 		e:update(dt)
+	end
+	for _, t in ipairs(towers) do
+		t:update(dt, enemies)
+	end
+	for i = #enemies, 1, -1 do
+		if enemies[i].health <= 0 then
+			table.remove(enemies, i)
+		end
 	end
 end
 

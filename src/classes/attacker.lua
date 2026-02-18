@@ -11,7 +11,11 @@ function Attacker.new(name, spawnPosition, pathData) -- pathdata from map_functi
 
 	instance.x = spawnPosition.x
 	instance.y = spawnPosition.y
+
 	instance.stats = enemyData[name]
+	instance.health = enemyData[name].health
+	instance.maxHealth = enemyData[name].health
+
 	instance.path = pathData
 	instance.endPoint = 1
 
@@ -41,6 +45,27 @@ function Attacker:draw()
 	love.graphics.setColor(1, 0, 0) -- Red enemy
 	love.graphics.circle("fill", self.x, self.y, 10)
 	love.graphics.setColor(1, 1, 1) -- Reset color
+
+	self:drawHealthBar()
 end
 
+function Attacker:drawHealthBar()
+	local width = 35
+	local height = 5
+	local padding = 20
+
+	local hpRatio = self.health / self.maxHealth
+	if hpRatio < 0 then
+		hpRatio = 0
+	end
+
+	love.graphics.setColor(1, 0, 0, 0.5)
+	love.graphics.rectangle("fill", self.x - width / 2, self.y + padding, width, height)
+
+	love.graphics.setColor(0, 1, 0)
+	love.graphics.rectangle("fill", self.x - width / 2, self.y + padding, width * hpRatio, height)
+
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.rectangle("line", self.x - width / 2, self.y + padding, width, height)
+end
 return Attacker
