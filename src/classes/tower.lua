@@ -1,5 +1,6 @@
 local Vector2 = require("/classes/vector2")
 local TowerData = require("/data/towers")
+local Button = require("/ui/button")
 
 local Tower = {}
 
@@ -13,6 +14,20 @@ function Tower.new(name, position)
 	instance.position = position
 	instance.targetMode = "first"
 
+	instance.selected = false
+
+	instance.button = Button.new(position.x, position.y, 15, 15, "") --this seems off will change dimensions
+	instance.button.Clicked:Connect(function()
+		instance.selected = not instance.selected
+		print(instance.id .. " was clicked! Selected: " .. tostring(instance.selected))
+	end)
+
+	--stuff for potential 2 image animation idk
+	--instance.sprites = TowerData[name].sprites
+	-- instance.activeFrame = 1
+	-- instance.animationTimer = 0
+	-- instance.animationSpeed = 0.5
+
 	return instance
 end
 
@@ -25,10 +40,11 @@ function Tower:findTarget() -- unfinished, need distance along the path
 	local worstDistance = nil
 	local bestHealth = nil
 	local worstHealth = nil
-
+	local towerVec = Vector2.new(self.position.x, self.position.y)
 	local attackers --placeholder
 	for i, target in ipairs(attackers) do
-		local distance = Vector2.sub(self.position, target.position) --need magnitude maybe make vector2 func
+		local enemyVec = Vector2.new(target.x, target.y)
+		local distance = towerVec:sub(enemyVec):len()
 		--local pathDistance = [target position along map path], best/worst distance should be based on this
 
 		if distance < self.stats.range then --implement modes: first, last, closest, strongest, weakest
@@ -86,3 +102,40 @@ end
 function Tower:remove() --just makes a flag so it can be cleaned up in the update loop
 	self.isDead = true
 end
+
+function Tower:update(dt) -- add cooldowns and put attack into this func
+	--will be used for animations with multiple sprites
+	--self.animationTimer = self.animationTimer + dt
+
+	-- if self.animationTimer > self.animationSpeed then
+	-- 	if self.activeFrame == 1 then
+	--         self.activeFrame = 2
+	--     else
+	--         self.activeFrame = 1
+	--     end
+	-- end
+
+	--reimplement soon but breaks game rn
+	-- local target = Tower:findTarget()
+	-- Tower:attack(target)
+	self.button:update(dt)
+end
+
+function Tower:draw() --temporary placeholder
+	--draws the "tower"
+	love.graphics.setColor(1, 0, 0.1)
+	love.graphics.rectangle("fill", self.position.x, self.position.y, 15, 15)
+
+	--draws the range
+	if self.selected then
+		love.graphics.setColor(1, 1, 1, 0.1)
+		love.graphics.circle("fill", self.position.x, self.position.y, self.stats.range)
+
+		love.graphics.setColor(1, 1, 1, 0.5)
+		love.graphics.circle("line", self.position.x, self.position.y, self.stats.range)
+	end
+
+	love.graphics.setColor(1, 1, 1, 1)
+end
+
+return Tower

@@ -4,6 +4,7 @@ local map_functions = require("map_functions")
 local TM = require("/services/tween_manager").new()
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
+local Tower = require("/classes/tower")
 local lick = require("lick")
 
 -- lick config
@@ -15,19 +16,30 @@ lick.clearPackages = true -- clear package cache on reload
 -- Table of map objects
 local maps = {}
 local enemies = {}
+local towers = {}
 local path = {}
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
 	maps.map1 = sti("assets/maps/map1.lua")
 	maps.map1.layers["Bushes"].visible = false
-	local attackPath = map_functions.getPath(maps.map1, "MainPath", "")
-	path = attackPath
-	local bug = Attacker.new("bug", attackPath[1], attackPath)
+
+	path = map_functions.getPath(maps.map1, "MainPath", "")
+
+	--dummy plant
+	local position = { x = path[2].x - 70, y = path[2].y + 60 }
+	local vine = Tower.new("vine", position)
+	table.insert(towers, vine)
+
+	--dummy bug
+	local bug = Attacker.new("bug", path[1], path)
 	table.insert(enemies, bug)
 end
 
 function love.update(dt)
+	for _, t in ipairs(towers) do
+		t:update(dt)
+	end
 	for _, e in ipairs(enemies) do
 		e:update(dt)
 	end
@@ -72,6 +84,9 @@ function love.draw()
 	-- Always reset color to white so it doesn't tint your map/sprites
 	love.graphics.setColor(1, 1, 1)
 
+	for _, t in ipairs(towers) do
+		t:draw()
+	end
 	for _, e in ipairs(enemies) do
 		e:draw()
 	end
