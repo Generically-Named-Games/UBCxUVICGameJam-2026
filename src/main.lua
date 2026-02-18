@@ -1,7 +1,6 @@
--- MODULES
 local sti = require("sti")
 local map_functions = require("map_functions")
-local TM = require("/services/tween_manager").new()
+local TweenManager = require("/services/tween_manager") ---@type TweenManager
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local Tower = require("/classes/tower")
@@ -47,7 +46,7 @@ end
 
 --Draws the map to fit the whole screen
 function love.draw()
-	TM:update()
+	TweenManager:update()
 
 	if maps.map1 then
 		local mapWidth = maps.map1.width * maps.map1.tilewidth
