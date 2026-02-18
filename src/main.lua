@@ -4,6 +4,13 @@ local map_functions = require("map_functions")
 local TM = require("/services/tween_manager").new()
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
+local lick = require("lick")
+
+-- lick config
+lick.reset = true -- reload love.load every time you save
+lick.updateAllFiles = true -- watch all files
+lick.fileExtensions = {} -- watch all file types
+lick.clearPackages = true -- clear package cache on reload
 
 -- Table of map objects
 local maps = {}
