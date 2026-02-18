@@ -12,8 +12,18 @@ function love.load()
 	maps.map1.layers["Bushes"].visible = false
 end
 
---Draws the map to fit the whole screen
+-- MODULES
+local window_functions = require("window_functions")
+local TM = require("/services/tween_manager").new()
+
+local dimensions = {
+	X = 0,
+	Y = 400,
+}
+
 function love.draw()
+	TM:update()
+
 	if maps.map1 then
 		local mapWidth = maps.map1.width * maps.map1.tilewidth
 		local mapHeight = maps.map1.height * maps.map1.tileheight
@@ -26,18 +36,7 @@ function love.draw()
 
 		maps.map1:draw(0, 0, scaleX, scaleY)
 	end
-end
--- MODULES
-local window_functions = require("window_functions")
-local TM = require("/services/tween_manager").new()
 
-local dimensions = {
-	X = 0,
-	Y = 400,
-}
-
-function love.draw()
-	TM:update()
 	love.graphics.print("Hello World", dimensions.X, dimensions.Y)
 end
 
