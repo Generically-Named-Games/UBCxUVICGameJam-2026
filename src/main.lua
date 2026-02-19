@@ -1,6 +1,7 @@
 local sti = require("sti")
 local map_functions = require("map_functions")
 local TweenManager = require("/services/tween_manager") ---@type TweenManager
+local Game = require("/services/game") ---@type Game
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local lick = require("lick")
@@ -13,65 +14,71 @@ lick.clearPackages = true -- clear package cache on reload
 
 -- Table of map objects
 local maps = {}
-local enemies = {}
 local path = {}
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
+
+	Game:CreatePauseButton()
+
 	maps.map1 = sti("assets/maps/map1.lua")
 	maps.map1.layers["Bushes"].visible = false
 	local attackPath = map_functions.getPath(maps.map1, "MainPath", "")
 	path = attackPath
 	local bug = Attacker.new("bug", attackPath[1], attackPath)
-	table.insert(enemies, bug)
+	table.insert(Game.ActiveEnemies, bug)
 end
 
 function love.update(dt)
-	for _, e in ipairs(enemies) do
-		e:update(dt)
-	end
+	Game:update(dt)
 end
 
 --Draws the map to fit the whole screen
 function love.draw()
 	TweenManager:update()
 
-	if maps.map1 then
-		local mapWidth = maps.map1.width * maps.map1.tilewidth
-		local mapHeight = maps.map1.height * maps.map1.tileheight
+	assert(maps.map1, "map1 was nil!")
 
-		local screenWidth = love.graphics.getWidth()
-		local screenHeight = love.graphics.getHeight()
+	local mapWidth = maps.map1.width * maps.map1.tilewidth
+	local mapHeight = maps.map1.height * maps.map1.tileheight
 
-		local scaleX = screenWidth / mapWidth
-		local scaleY = screenHeight / mapHeight
+	local screenWidth = love.graphics.getWidth()
+	local screenHeight = love.graphics.getHeight()
 
-		maps.map1:draw(0, 0, scaleX, scaleY)
-	end
-	if not path or #path == 0 then
-		return
-	end
+	local scaleX = screenWidth / mapWidth
+	local scaleY = screenHeight / mapHeight
 
-	-- Set color to something bright like Yellow
-	love.graphics.setColor(1, 1, 0)
+	maps.map1:draw(0, 0, scaleX, scaleY)
 
-	for i, point in ipairs(path) do
-		-- Draw a circle at the path coordinate
-		love.graphics.circle("fill", point.x, point.y, 5)
+	love.graphics.push()
+	love.graphics.scale(scaleX, scaleY)
 
-		-- Optional: Label the points so you know the order
-		love.graphics.print("Point " .. i, point.x + 10, point.y - 10)
+	Game:drawInMap()
 
-		-- Draw a line to the next point to show the path segment
-		if path[i + 1] then
-			love.graphics.line(point.x, point.y, path[i + 1].x, path[i + 1].y)
+	-- why the fuck does dividing by 2 everywhere here work (at least for 1920x1080)? i tried it randomly and now everything is aligned.
+	-- i dont get love2d man :sob:
+	if path and #path > 0 then
+		-- Set color to something bright like Yellow
+		love.graphics.setColor(1, 1, 0)
+
+		for i, point in ipairs(path) do
+			-- Draw a circle at the path coordinate
+			love.graphics.circle("fill", point.x, point.y / 2, 5)
+
+			-- Optional: Label the points so you know the order
+			love.graphics.print("Point " .. i, point.x + 10, point.y / 2 - 10)
+
+			-- Draw a line to the next point to show the path segment
+			if path[i + 1] then
+				love.graphics.line(point.x, point.y / 2, path[i + 1].x, path[i + 1].y / 2)
+			end
 		end
+
+		-- Always reset color to white so it doesn't tint your map/sprites
+		love.graphics.setColor(1, 1, 1)
 	end
 
-	-- Always reset color to white so it doesn't tint your map/sprites
-	love.graphics.setColor(1, 1, 1)
+	love.graphics.pop()
 
-	for _, e in ipairs(enemies) do
-		e:draw()
-	end
+	Game:draw()
 end
