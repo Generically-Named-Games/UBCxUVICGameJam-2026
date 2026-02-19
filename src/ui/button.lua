@@ -22,6 +22,7 @@ function Button.new(x, y, w, h, text)
 	instance._clicked = false
 	--events
 	instance.Clicked = Event.new()
+	instance.Unclicked = Event.new()
 	--instance.Hovered = Event.new()
 
 	return instance
@@ -56,11 +57,20 @@ function Button:update(dt)
 	)
 
 	if in_bounds then
-		if clicking then
+		if clicking and not self._clicked then
+			self._clicked = true
 			self.Clicked:Invoke()
+		elseif not clicking and self._clicked then
+			self._clicked = false
+			self.Unclicked:Invoke()
 		else
 			print("in bounds! doing nothing! woah!")
 			--self.Hovered:Invoke()
+		end
+	else
+		if not clicking and self._clicked then
+			self._clicked = false
+			self.Unclicked:Invoke()
 		end
 	end
 end
