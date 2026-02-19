@@ -4,6 +4,7 @@ local TweenManager = require("/services/tween_manager") ---@type TweenManager
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local Tower = require("/classes/tower")
+local Vector2 = require("/classes/vector2")
 local lick = require("lick")
 
 -- lick config
@@ -17,6 +18,8 @@ local maps = {}
 local enemies = {}
 local towers = {}
 local path = {}
+local isPlacing = true
+local placementType = "vine"
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
@@ -36,9 +39,6 @@ function love.load()
 end
 
 function love.update(dt)
-	for _, t in ipairs(towers) do
-		t:update(dt)
-	end
 	for _, e in ipairs(enemies) do
 		e:update(dt)
 	end
@@ -96,5 +96,18 @@ function love.draw()
 	end
 	for _, e in ipairs(enemies) do
 		e:draw()
+	end
+end
+
+function love.mousepressed(x, y, button)
+	if button == 1 and isPlacing then
+		local clear = Tower.isNotOverlapping(towers, x, y)
+		if clear then
+			local newTower = Tower.new(placementType, { x = x, y = y })
+			table.insert(towers, newTower)
+			isPlacing = false
+		end
+	elseif button == 2 then
+		isPlacing = false
 	end
 end

@@ -96,12 +96,18 @@ function Tower:attack(enemy) -- expects enemy death logic
 	enemy.health = enemy.health - self.stats.attack
 end
 
-function Tower.canPlace(name, position) --wip, dont know how to check map tiles
-	local towerSize = TowerData[name].size
-	if towerSize then
-		--check if tiles are empty and valid for placement
-		--check if player can afford/ other restrictions on placement
+function Tower.isNotOverlapping(towerList, x, y)
+	local padding = 30
+
+	for _, t in ipairs(towerList) do
+		local towerDifference = Vector2.new(x - t.position.x, y - t.position.y)
+		local distance = towerDifference:len()
+
+		if distance < padding then
+			return false
+		end
 	end
+	return true
 end
 
 function Tower.spawn(name, position)
