@@ -1,6 +1,16 @@
+---@class RGBA
+---@field red number
+---@field green number
+---@field blue number
+---@field alpha number
 local RGB = {}
 RGB.__index = RGB
 
+---Creates a new RGBA object
+---@param r number?
+---@param g number?
+---@param b number?
+---@param a number?
 function RGB.new(r, g, b, a)
 	local instance = setmetatable({}, RGB)
 
@@ -12,6 +22,8 @@ function RGB.new(r, g, b, a)
 	return instance
 end
 
+---Converts the RGBA to a table to be in format (1.0, 1.0, 1.0, 0.0)
+---@return table
 function RGB:convert()
 	return { self.red / 255, self.green / 255, self.blue / 255, self.alpha }
 end
