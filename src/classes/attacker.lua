@@ -52,7 +52,7 @@ end
 function Attacker:drawHealthBar()
 	local width = 35
 	local height = 5
-	local padding = 20
+	local padding = 35
 
 	local hpRatio = self.health / self.maxHealth
 	if hpRatio < 0 then

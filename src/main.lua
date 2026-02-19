@@ -5,7 +5,6 @@ local Game = require("/services/game") ---@type Game
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local Tower = require("/classes/tower")
-local Vector2 = require("/classes/vector2")
 local lick = require("lick")
 
 -- lick config
@@ -66,11 +65,6 @@ function love.draw()
 
 	maps.map1:draw(0, 0, scaleX, scaleY)
 
-	love.graphics.push()
-	love.graphics.scale(scaleX, scaleY)
-
-	Game:drawInMap()
-
 	-- why the fuck does dividing by 2 everywhere here work (at least for 1920x1080)? i tried it randomly and now everything is aligned.
 	-- i dont get love2d man :sob:
 	if path and #path > 0 then
@@ -94,17 +88,16 @@ function love.draw()
 		love.graphics.setColor(1, 1, 1)
 	end
 
-	love.graphics.pop()
-
 	Game:draw()
 end
 
 function love.mousepressed(x, y, button)
 	if button == 1 and isPlacing then
-		local clear = Tower.isNotOverlapping(towers, x, y)
+		local clear = Tower.isNotOverlapping(Game.ActiveTowers, x, y)
+
 		if clear then
 			local newTower = Tower.new(placementType, { x = x, y = y })
-			table.insert(towers, newTower)
+			table.insert(Game.ActiveTowers, newTower)
 			isPlacing = false
 		end
 	elseif button == 2 then
