@@ -5,6 +5,7 @@ local Game = require("/services/game") ---@type Game
 local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local Tower = require("/classes/tower")
+local Vector2 = require("/classes/vector2")
 local lick = require("lick")
 
 -- lick config
@@ -16,6 +17,8 @@ lick.clearPackages = true -- clear package cache on reload
 -- Table of map objects
 local maps = {}
 local path = {}
+local isPlacing = true
+local placementType = "vine"
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
@@ -94,4 +97,17 @@ function love.draw()
 	love.graphics.pop()
 
 	Game:draw()
+end
+
+function love.mousepressed(x, y, button)
+	if button == 1 and isPlacing then
+		local clear = Tower.isNotOverlapping(towers, x, y)
+		if clear then
+			local newTower = Tower.new(placementType, { x = x, y = y })
+			table.insert(towers, newTower)
+			isPlacing = false
+		end
+	elseif button == 2 then
+		isPlacing = false
+	end
 end
