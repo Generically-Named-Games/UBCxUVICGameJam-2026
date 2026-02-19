@@ -18,14 +18,15 @@ local path = {}
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
+
+	Game:CreatePauseButton()
+
 	maps.map1 = sti("assets/maps/map1.lua")
 	maps.map1.layers["Bushes"].visible = false
 	local attackPath = map_functions.getPath(maps.map1, "MainPath", "")
 	path = attackPath
 	local bug = Attacker.new("bug", attackPath[1], attackPath)
 	table.insert(Game.ActiveEnemies, bug)
-
-	Game:StartRound()
 end
 
 function love.update(dt)
@@ -52,7 +53,7 @@ function love.draw()
 	love.graphics.push()
 	love.graphics.scale(scaleX, scaleY)
 
-	Game:draw()
+	Game:drawInMap()
 
 	-- why the fuck does dividing by 2 everywhere here work (at least for 1920x1080)? i tried it randomly and now everything is aligned.
 	-- i dont get love2d man :sob:
@@ -78,4 +79,6 @@ function love.draw()
 	end
 
 	love.graphics.pop()
+
+	Game:draw()
 end
