@@ -20,8 +20,12 @@ function Tower.new(name, position)
 
 	instance.button = Button.new(position.x, position.y, 15, 15, "") --this seems off will change dimensions
 	instance.button.Clicked:Connect(function()
-		instance.selected = not instance.selected
+		instance.selected = true
 		print(instance.id .. " was clicked! Selected: " .. tostring(instance.selected))
+	end)
+
+	instance.button.Unclicked:Connect(function()
+		instance.selected = false
 	end)
 
 	--stuff for potential 2 image animation idk
@@ -143,7 +147,7 @@ end
 function Tower:draw() --temporary placeholder
 	--draws the "tower"
 	love.graphics.setColor(1, 0, 0.1)
-	love.graphics.rectangle("fill", self.position.x, self.position.y, 15, 15)
+	love.graphics.rectangle("fill", self.position.x - 7.5, self.position.y - 7.5, 15, 15) -- need to subtract by half the size!
 
 	--draws the range
 	if self.selected then
