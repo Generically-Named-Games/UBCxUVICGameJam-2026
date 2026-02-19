@@ -1,9 +1,19 @@
--- MODULES
 local RGBA = require("/ui/rgba")
 local Event = require("/classes/event")
 local Label = require("/ui/label")
 local Vector2 = require("/classes/vector2")
 
+---@class Button
+---@field Position Vector2
+---@field Size Vector2
+---@field Label Label
+---@field Colour RGBA
+---@field HighlightColour RGBA?
+---@field ClickedColour RGBA?
+---@field private _enabled boolean
+---@field private _hovered boolean
+---@field private _clicked boolean
+---@field Clicked Event
 local Button = {}
 Button.__index = Button
 --most of this module was taken from here: https://github.com/bncastle/love2d-tutorial/blob/Episode15/lib/ui/Button.lua
@@ -28,6 +38,10 @@ function Button.new(x, y, w, h, text)
 	return instance
 end
 
+---Sets the button's regular, highlight, and pressed colours
+---@param regular RGBA
+---@param highlighted RGBA?
+---@param pressed RGBA?
 function Button:SetColours(regular, highlighted, pressed)
 	self.Colour = regular
 	if highlighted then
@@ -42,6 +56,8 @@ end
 --     self._enabled = enabled
 -- end
 
+---updates the button
+---@param dt number
 function Button:update(dt)
 	if not self._enabled then
 		return
@@ -75,6 +91,7 @@ function Button:update(dt)
 	end
 end
 
+---draws the button
 function Button:draw()
 	--print(self.Position.X - self.Size.X/2, self.Position.Y - self.Size.Y/2, self.Size.X, self.Size.Y)
 	love.graphics.push()
