@@ -1,8 +1,8 @@
 local Button = require("/ui/button")
 
 ---@class Game
----@field ActiveTowers table
----@field ActiveEnemies table
+---@field ActiveTowers Tower[]
+---@field ActiveEnemies Attacker[]
 ---@field TimeSinceRoundStarted number
 ---@field RoundStatus "Paused" | "Ongoing" | "Dead"
 ---@field private _currency number

@@ -1,5 +1,10 @@
 local Button = require("/ui/button")
 
+---@class TowerCard
+---@field Tower Tower?
+---@field Visible boolean
+---@field ModeButtons table
+---@field SellButton Button
 local TowerCard = {}
 TowerCard.__index = TowerCard
 
@@ -17,10 +22,10 @@ local SELL_X = 700
 function TowerCard.new()
 	local instance = setmetatable({}, TowerCard)
 
-	instance.tower = nil --currently selected tower
-	instance.visible = false
+	instance.Tower = nil --currently selected tower
+	instance.Visible = false
 
-	instance.modeButtons = {}
+	instance.ModeButtons = {}
 	for i, mode in ipairs(MODES) do
 		local column = (i - 1) % 2
 		local row = math.floor((i - 1) / 2)
@@ -29,46 +34,49 @@ function TowerCard.new()
 		local newButton = Button.new(buttonX, buttonY, 74, 24, "")
 		local capturedMode = mode
 		newButton.Clicked:Connect(function()
-			if instance.tower then
-				instance.tower.targetMode = capturedMode
+			if instance.Tower then
+				instance.Tower.TargetMode = capturedMode
 			end
 		end)
-		instance.modeButtons[i] = { button = newButton, mode = mode }
+		instance.ModeButtons[i] = { button = newButton, mode = mode }
 	end
-	instance.sellButton = Button.new(SELL_X + 40, screenHeight - CARD_HEIGHT + 55, 80, 30, "")
-	instance.sellButton.Clicked:Connect(function()
-		if instance.tower then
-			instance.tower:remove()
-			instance.tower = nil
+	instance.SellButton = Button.new(SELL_X + 40, screenHeight - CARD_HEIGHT + 55, 80, 30, "")
+	instance.SellButton.Clicked:Connect(function()
+		if instance.Tower then
+			instance.Tower:remove()
+			instance.Tower = nil
 		end
 	end)
 	return instance
 end
 
+---Update loop for Tower Card
+---@param dt number
+---@param activeTowers Tower[]
 function TowerCard:update(dt, activeTowers)
-	self.tower = nil
+	self.Tower = nil
 	for _, t in ipairs(activeTowers) do
-		if t.selected then
-			self.tower = t
+		if t.Selected then
+			self.Tower = t
 			break
 		end
 	end
 
-	if not self.tower then
+	if not self.Tower then
 		return
 	end
 
-	for _, mode in ipairs(self.modeButtons) do
+	for _, mode in ipairs(self.ModeButtons) do
 		mode.button:update(dt)
 	end
-	self.sellButton:update(dt)
+	self.SellButton:update(dt)
 end
 
 function TowerCard:draw()
-	if not self.tower then
+	if not self.Tower then
 		return
 	end
-	local stats = self.tower.stats
+	local stats = self.Tower.Stats
 
 	-- background and border
 	love.graphics.setColor(0.1, 0.1, 0.06, 0.95)
@@ -78,7 +86,7 @@ function TowerCard:draw()
 
 	-- stats and name
 	love.graphics.setColor(0.56, 0.83, 0.35)
-	love.graphics.print(self.tower.id:upper(), STATS_X, cardPositionY + 14)
+	love.graphics.print(self.Tower.ID:upper(), STATS_X, cardPositionY + 14)
 	love.graphics.setColor(0.78, 0.85, 0.67)
 	love.graphics.print("DMG:    " .. (stats.attack or "?"), STATS_X, cardPositionY + 36)
 	love.graphics.print("SPEED:  " .. string.format("%.1fs", stats.cooldown or 0), STATS_X, cardPositionY + 54)
@@ -86,9 +94,9 @@ function TowerCard:draw()
 	-- Mode buttons
 	love.graphics.setColor(0.29, 0.42, 0.18)
 	love.graphics.print("TARGET MODE", MODES_X, cardPositionY + 4)
-	for _, entry in ipairs(self.modeButtons) do
+	for _, entry in ipairs(self.ModeButtons) do
 		local btn = entry.button
-		local active = self.tower.targetMode == entry.mode
+		local active = self.Tower.TargetMode == entry.mode
 
 		love.graphics.setColor(active and 0.12 or 0.06, active and 0.23 or 0.1, 0.03)
 		love.graphics.rectangle(
@@ -111,7 +119,7 @@ function TowerCard:draw()
 	end
 
 	--sell button
-	local sb = self.sellButton
+	local sb = self.SellButton
 	love.graphics.setColor(0.16, 0.06, 0.06)
 	love.graphics.rectangle("fill", sb.Position.X - sb.Size.X / 2, sb.Position.Y - sb.Size.Y / 2, sb.Size.X, sb.Size.Y)
 	love.graphics.setColor(0.47, 0.16, 0.1)

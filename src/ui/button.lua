@@ -14,6 +14,7 @@ local Vector2 = require("/classes/vector2")
 ---@field private _hovered boolean
 ---@field private _clicked boolean
 ---@field Clicked Event
+---@field Unclicked Event
 local Button = {}
 Button.__index = Button
 --most of this module was taken from here: https://github.com/bncastle/love2d-tutorial/blob/Episode15/lib/ui/Button.lua
@@ -76,15 +77,15 @@ function Button:update(dt)
 		if clicking and not self._clicked then
 			self._clicked = true
 			self.Clicked:Invoke()
-		elseif not clicking and self._clicked then
-			self._clicked = false
-			self.Unclicked:Invoke()
+		-- elseif not clicking and self._clicked then
+		-- 	self._clicked = false
+		-- 	self.Unclicked:Invoke()
 		else
 			print("in bounds! doing nothing! woah!")
 			--self.Hovered:Invoke()
 		end
 	else
-		if not clicking and self._clicked then
+		if clicking and self._clicked then
 			self._clicked = false
 			self.Unclicked:Invoke()
 		end
