@@ -7,6 +7,7 @@ local Vector2 = require("/classes/vector2")
 ---@field Stats table
 ---@field Health number
 ---@field MaxHealth number
+---@field ReachedEnd boolean
 ---@field Path table
 ---@field EndPoint number
 ---@field AnimTimer number
@@ -29,6 +30,7 @@ function Attacker.new(name, spawnPosition, pathData) -- pathdata from map_functi
 	instance.Stats = enemyData[name]
 	instance.Health = enemyData[name].health
 	instance.MaxHealth = enemyData[name].health
+	instance.ReachedEnd = false
 
 	instance.Path = pathData
 	instance.EndPoint = 1
@@ -49,6 +51,11 @@ function Attacker.new(name, spawnPosition, pathData) -- pathdata from map_functi
 end
 
 function Attacker:update(dt)
+	if self.EndPoint > #self.Path then
+		self.ReachedEnd = true
+		return
+	end
+
 	local target = Vector2.new(self.Path[self.EndPoint].x, self.Path[self.EndPoint].y)
 	local difference = target - self.Position
 	local distance = difference:len()
@@ -68,18 +75,14 @@ function Attacker:update(dt)
 			end
 		end
 	else
-		if self.EndPoint < #self.Path then
-			self.EndPoint = self.EndPoint + 1
+		self.EndPoint = self.EndPoint + 1
 
-			local next = self.Path[self.EndPoint]
-			local dx = next.x - self.Position.X
-			local dy = next.y - self.Position.Y
-			local angle = math.atan2(dy, dx)
+		local next = self.Path[self.EndPoint]
+		local dx = next.x - self.Position.X
+		local dy = next.y - self.Position.Y
+		local angle = math.atan2(dy, dx)
 
-			self.rotation = math.floor((angle / (math.pi / 2)) + 0.5) * (math.pi / 2) + math.pi / 2
-		else
-			--base hit logic?
-		end
+		self.rotation = math.floor((angle / (math.pi / 2)) + 0.5) * (math.pi / 2) + math.pi / 2
 	end
 end
 

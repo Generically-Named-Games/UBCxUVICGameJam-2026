@@ -49,7 +49,11 @@ function love.update(dt)
 	Game:update(dt)
 	card:update(dt, Game.ActiveTowers)
 	for i = #Game.ActiveEnemies, 1, -1 do
-		if Game.ActiveEnemies[i].Health <= 0 then
+		if Game.ActiveEnemies[i].ReachedEnd then
+			Game:Damage(25)
+			table.remove(Game.ActiveEnemies, i)
+		elseif Game.ActiveEnemies[i].Health <= 0 then
+			Game:AddCurrency(20)
 			table.remove(Game.ActiveEnemies, i)
 		end
 	end
