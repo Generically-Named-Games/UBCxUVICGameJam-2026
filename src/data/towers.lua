@@ -2,11 +2,14 @@ local towers = { --holds all the tower templates and probably the upgrade stats 
 	vine = { --placeholder tower
 		name = "vine",
 		cost = 100,
-		range = 3,
+		range = 100,
 		attack = 10,
 		cooldown = 0.5,
 		--size =
-		--sprite =
+		-- sprites = {
+		-- 	love.graphics.newImage("/assets/images/plant1.png"),
+		-- 	love.graphics.newImage("/assets/images/plant2.png"),
+		-- },
 		--onhit function for cool towers
 	},
 }

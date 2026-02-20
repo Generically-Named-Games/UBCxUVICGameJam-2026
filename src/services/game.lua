@@ -1,8 +1,8 @@
 local Button = require("/ui/button")
 
 ---@class Game
----@field ActiveTowers table
----@field ActiveEnemies table
+---@field ActiveTowers Tower[]
+---@field ActiveEnemies Attacker[]
 ---@field TimeSinceRoundStarted number
 ---@field RoundStatus "Paused" | "Ongoing" | "Dead"
 ---@field private _currency number
@@ -19,7 +19,7 @@ function Game.new()
 	instance.RoundStatus = "Paused"
 	instance.TimeSinceRoundStarted = 0
 	-- PRIVATE
-	instance._currency = 0
+	instance._currency = 500
 	instance._pause = nil
 
 	return instance
@@ -36,17 +36,14 @@ function Game:update(dt)
 	if self.RoundStatus == "Ongoing" then
 		self.TimeSinceRoundStarted = self.TimeSinceRoundStarted + dt
 
+		for _, t in ipairs(self.ActiveTowers) do
+			t:update(dt, self.ActiveEnemies)
+		end
 		for _, e in ipairs(self.ActiveEnemies) do
 			e:update(dt)
 		end
 	end
 	self._pause:update(dt)
-end
-
-function Game:drawInMap()
-	for _, e in ipairs(self.ActiveEnemies) do
-		e:draw()
-	end
 end
 
 function Game:draw()
@@ -55,6 +52,15 @@ function Game:draw()
 	local screenWidth = love.graphics.getWidth()
 	local screenHeight = love.graphics.getHeight()
 	love.graphics.print("Currency: " .. tostring(self._currency), screenWidth - 128 - 50, screenHeight - 128 - 100)
+end
+
+function Game:drawEntities()
+	for _, t in ipairs(self.ActiveTowers) do
+		t:draw()
+	end
+	for _, e in ipairs(self.ActiveEnemies) do
+		e:draw()
+	end
 end
 
 function Game:PauseRound()
@@ -82,6 +88,11 @@ function Game:CreatePauseButton()
 			self:StartRound()
 		end
 	end)
+end
+
+function Game:CreateBuyTowerButton()
+	local screenWidth = love.graphics.getWidth()
+	local screenHeight = love.graphics.getHeight()
 end
 
 return Game.new()
