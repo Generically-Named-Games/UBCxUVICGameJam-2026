@@ -137,7 +137,7 @@ end
 ---@param x number
 ---@param y number
 function Tower.isNotOverlapping(towerList, x, y)
-	local padding = 30
+	local padding = 10
 
 	for _, t in ipairs(towerList) do
 		local towerDifference = Vector2.new(x - t.Position.X, y - t.Position.Y)

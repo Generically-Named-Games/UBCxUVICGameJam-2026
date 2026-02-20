@@ -3,7 +3,7 @@ local towers = { --holds all the tower templates and probably the upgrade stats 
 		name = "basic",
 		cost = 100,
 		range = 30,
-		attack = 10,
+		attack = 12,
 		cooldown = 0.5,
 		sprites = {
 			"assets/images/basic_plant1.png",

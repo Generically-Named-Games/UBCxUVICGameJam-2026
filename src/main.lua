@@ -67,7 +67,9 @@ function love.update(dt)
 	Game:update(dt)
 	card:update(dt, Game.ActiveTowers)
 	shop:update(dt)
-	waveManager:update(dt)
+	if Game.RoundStatus == "Ongoing" then
+		waveManager:update(dt)
+	end
 	for i = #Game.ActiveEnemies, 1, -1 do
 		if Game.ActiveEnemies[i].ReachedEnd then
 			Game:Damage(25)
@@ -189,7 +191,7 @@ function love.mousepressed(x, y, button)
 	if button == 1 and isPlacing then
 		local clear = Tower.isNotOverlapping(Game.ActiveTowers, worldX, worldY)
 		local cost = TowerData[placementType].cost
-		if clear and cost < Game:GetCurrency() then
+		if clear and cost <= Game:GetCurrency() then
 			Game:AddCurrency(-cost)
 			local newTower = Tower.new(placementType, worldPos, screenPos)
 			table.insert(Game.ActiveTowers, newTower)
