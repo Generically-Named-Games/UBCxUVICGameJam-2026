@@ -18,7 +18,7 @@ function Tower.new(name, position)
 
 	instance.selected = false
 
-	instance.button = Button.new(position.x, position.y, 15, 15, "") --this seems off will change dimensions
+	instance.button = Button.new(position.x * SCALE_X, position.y * SCALE_Y, 15, 15, "") --this seems off will change dimensions
 	instance.button.Clicked:Connect(function()
 		instance.selected = true
 		print(instance.id .. " was clicked! Selected: " .. tostring(instance.selected))

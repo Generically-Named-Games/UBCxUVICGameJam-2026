@@ -47,18 +47,20 @@ function Game:update(dt)
 end
 
 function Game:draw()
+	self._pause:draw()
+
+	local screenWidth = love.graphics.getWidth()
+	local screenHeight = love.graphics.getHeight()
+	love.graphics.print("Currency: " .. tostring(self._currency), screenWidth - 128 - 50, screenHeight - 128 - 100)
+end
+
+function Game:drawEntities()
 	for _, t in ipairs(self.ActiveTowers) do
 		t:draw()
 	end
 	for _, e in ipairs(self.ActiveEnemies) do
 		e:draw()
 	end
-
-	self._pause:draw()
-
-	local screenWidth = love.graphics.getWidth()
-	local screenHeight = love.graphics.getHeight()
-	love.graphics.print("Currency: " .. tostring(self._currency), screenWidth - 128 - 50, screenHeight - 128 - 100)
 end
 
 function Game:PauseRound()
