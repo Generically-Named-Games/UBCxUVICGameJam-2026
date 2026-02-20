@@ -1,4 +1,4 @@
-local RGBA = require("/ui/rgba")
+local RGBA = require("ui/rgba")
 
 ---@class Label
 ---@field Text string

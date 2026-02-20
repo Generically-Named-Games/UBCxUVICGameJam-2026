@@ -6,7 +6,7 @@ STRUCTURE:
     { name = "enemy_type", delay = seconds_after_wave_start }
 
 USAGE:
-    local WaveData = require("/data/waves")
+    local WaveData = require("data/waves")
     local wave = WaveData[1]  -- get wave 1
     for _, entry in ipairs(wave) do
         -- entry.name, entry.delay

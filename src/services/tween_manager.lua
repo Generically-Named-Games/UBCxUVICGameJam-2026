@@ -1,4 +1,4 @@
-local Event = require("/classes/event")
+local Event = require("classes/event")
 
 --------------------------------------------------------------------------------
 -- PRIVATE TWEEN CLASS (TO BE USED IN THIS FILE ONLY!)

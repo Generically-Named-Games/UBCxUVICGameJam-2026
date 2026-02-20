@@ -1,6 +1,6 @@
-local WaveData = require("/data/waves")
-local Attacker = require("/classes/attacker")
-local Vector2 = require("/classes/vector2")
+local WaveData = require("data/waves")
+local Attacker = require("classes/attacker")
+local Vector2 = require("classes/vector2")
 
 local WaveManager = {}
 WaveManager.__index = WaveManager

@@ -1,4 +1,4 @@
-local Button = require("/ui/button")
+local Button = require("ui/button")
 
 ---@class TowerCard
 ---@field Tower Tower?

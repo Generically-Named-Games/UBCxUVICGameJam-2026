@@ -1,6 +1,6 @@
-local Vector2 = require("/classes/vector2")
-local TowerData = require("/data/towers")
-local Button = require("/ui/button")
+local Vector2 = require("classes/vector2")
+local TowerData = require("data/towers")
+local Button = require("ui/button")
 
 ---@class Tower
 ---@field ID string

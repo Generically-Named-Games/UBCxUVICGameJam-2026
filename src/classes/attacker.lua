@@ -1,6 +1,6 @@
-local enemyData = require("/data/attackers")
+local enemyData = require("data/attackers")
 local path_func = require("path_functions")
-local Vector2 = require("/classes/vector2")
+local Vector2 = require("classes/vector2")
 
 ---@class Attacker
 ---@field Position Vector2

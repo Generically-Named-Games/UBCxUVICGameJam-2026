@@ -1,5 +1,5 @@
-local Button = require("/ui/button")
-local TowerData = require("/data/towers")
+local Button = require("ui/button")
+local TowerData = require("data/towers")
 
 local Shop = {}
 Shop.__index = Shop
