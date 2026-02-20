@@ -6,7 +6,7 @@ local window_functions = require("window_functions")
 local Attacker = require("/classes/attacker")
 local Tower = require("/classes/tower")
 local lick = require("lick")
-
+local TowerCard = require("/ui/towercard")
 -- lick config
 lick.reset = true -- reload love.load every time you save
 lick.updateAllFiles = true -- watch all files
@@ -21,6 +21,8 @@ local maps = {}
 local path = {}
 local isPlacing = true
 local placementType = "vine"
+local card = nil
+
 --Load in the map and whether its layers are visible
 function love.load()
 	window_functions.setFullscreen("desktop")
@@ -37,18 +39,22 @@ function love.load()
 	for i, p in ipairs(path) do --bandaid fix for map1
 		p.y = p.y - 142
 	end
+
+	card = TowerCard.new()
+
 	--dummy plant
 	local position = { x = path[2].x - 70, y = path[2].y + 60 }
 	local vine = Tower.new("vine", position)
 	table.insert(Game.ActiveTowers, vine)
 
 	--dummy bug
-	local bug = Attacker.new("bug", path[1], path)
+	local bug = Attacker.new("flying_bug", path[1], path)
 	table.insert(Game.ActiveEnemies, bug)
 end
 
 function love.update(dt)
 	Game:update(dt)
+	card:update(dt, Game.ActiveTowers)
 	for i = #Game.ActiveEnemies, 1, -1 do
 		if Game.ActiveEnemies[i].health <= 0 then
 			table.remove(Game.ActiveEnemies, i)
@@ -91,6 +97,7 @@ function love.draw()
 
 	Game:drawEntities() --draws towers and enemies seperate from stationary buttons
 	love.graphics.pop()
+	card:draw()
 	Game:draw()
 end
 

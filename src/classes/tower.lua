@@ -1,7 +1,6 @@
 local Vector2 = require("/classes/vector2")
 local TowerData = require("/data/towers")
 local Button = require("/ui/button")
-local Button = require("/ui/button")
 
 local Tower = {}
 
@@ -16,6 +15,17 @@ function Tower.new(name, position)
 	instance.targetMode = "first"
 	instance.attackTimer = 0
 
+	instance.animFrame = 1
+	instance.animTimer = 0
+	instance.sprites = {} --lick wants me to preload or something idk
+	for i, path in ipairs(TowerData[name].sprites) do
+		if type(path) == "string" then
+			instance.sprites[i] = love.graphics.newImage(path)
+		else
+			instance.sprites[i] = path -- already an Image
+		end
+	end
+
 	instance.selected = false
 
 	instance.button = Button.new(position.x * SCALE_X, position.y * SCALE_Y, 15, 15, "") --this seems off will change dimensions
@@ -27,12 +37,6 @@ function Tower.new(name, position)
 	instance.button.Unclicked:Connect(function()
 		instance.selected = false
 	end)
-
-	--stuff for potential 2 image animation idk
-	--instance.sprites = TowerData[name].sprites
-	-- instance.activeFrame = 1
-	-- instance.animationTimer = 0
-	-- instance.animationSpeed = 0.5
 
 	return instance
 end
@@ -92,12 +96,15 @@ function Tower:findTarget(activeEnemies) -- modes need to be tested
 end
 
 function Tower:attack(enemy) -- expects enemy death logic
+	-- if self.stats.onHit then --no onhits yet but will be useful probably
+	-- 	self.stats.onHit(enemy, self)
 	if enemy.health <= 0 then
 		return
 	end
-	-- if self.stats.onHit then --no onhits yet but will be useful probably
-	-- 	self.stats.onHit(enemy, self)
+
 	enemy.health = enemy.health - self.stats.attack
+	self.animFrame = 2 --attack state
+	self.animTimer = 0
 end
 
 function Tower.isNotOverlapping(towerList, x, y)
@@ -114,31 +121,15 @@ function Tower.isNotOverlapping(towerList, x, y)
 	return true
 end
 
-function Tower.spawn(name, position)
-	if Tower.canPlace(name, position) then
-		local newTower = Tower.new(name, position)
-		--table.insert(list of towers, newTower)
-
-		--add cost logic once thats figured out
-	end
-	return nil
-end
-
 function Tower:remove() --just makes a flag so it can be cleaned up in the update loop
 	self.isDead = true
 end
 
 function Tower:update(dt, activeEnemies)
-	--will be used for animations with multiple sprites
-	--self.animationTimer = self.animationTimer + dt
-
-	-- if self.animationTimer > self.animationSpeed then
-	-- 	if self.activeFrame == 1 then
-	--         self.activeFrame = 2
-	--     else
-	--         self.activeFrame = 1
-	--     end
-	-- end
+	self.animTimer = self.animTimer + dt
+	if self.animTimer >= 0.1 then -- show frame 2 for 0.1s then snap back
+		self.animFrame = 1
+	end
 	self.attackTimer = self.attackTimer + dt
 
 	local target = self:findTarget(activeEnemies)
@@ -150,12 +141,30 @@ function Tower:update(dt, activeEnemies)
 	self.button:update(dt)
 end
 
-function Tower:draw() --temporary placeholder
+function Tower:draw()
+	--placeholder
 	--draws the "tower"
-	love.graphics.setColor(1, 0, 0.1)
-	love.graphics.rectangle("fill", self.position.x - 7.5, self.position.y - 7.5, 15, 15) -- need to subtract by half the size!
+	-- love.graphics.setColor(1, 0, 0.1)
+	-- love.graphics.rectangle("fill", self.position.x - 7.5, self.position.y - 7.5, 15, 15) -- need to subtract by half the size!
 
 	--draws the range
+
+	-- love.graphics.setColor(1, 1, 1, 1)
+	local sprite = self.sprites[self.animFrame]
+	if not sprite then
+		return
+	end
+	local w, h = sprite:getDimensions()
+	love.graphics.draw(
+		sprite,
+		self.position.x,
+		self.position.y,
+		0, -- rotation
+		32 / w, -- scaled to 32x32
+		32 / h,
+		w / 2, --center
+		h / 2
+	)
 	if self.selected then
 		love.graphics.setColor(1, 1, 1, 0.1)
 		love.graphics.circle("fill", self.position.x, self.position.y, self.stats.range)
