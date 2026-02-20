@@ -1,7 +1,7 @@
-local RGBA = require("/ui/rgba")
-local Event = require("/classes/event")
-local Label = require("/ui/label")
-local Vector2 = require("/classes/vector2")
+local RGBA = require("ui/rgba")
+local Event = require("classes/event")
+local Label = require("ui/label")
+local Vector2 = require("classes/vector2")
 
 ---@class Button
 ---@field Position Vector2

@@ -1,11 +1,11 @@
 local sti = require("sti")
 local map_functions = require("map_functions")
-local TweenManager = require("/services/tween_manager") ---@type TweenManager
-local Game = require("/services/game") ---@type Game
+local TweenManager = require("services/tween_manager") ---@type TweenManager
+local Game = require("services/game") ---@type Game
 local path_func = require("path_functions")
-local Attacker = require("/classes/attacker")
-local Vector2 = require("/classes/Vector2")
-local Tower = require("/classes/tower")
+local Attacker = require("classes/attacker")
+local Vector2 = require("classes/vector2")
+local Tower = require("classes/tower")
 local lick = require("lick")
 
 -- lick config
