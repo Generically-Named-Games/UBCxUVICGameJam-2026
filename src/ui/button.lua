@@ -14,6 +14,7 @@ local Vector2 = require("/classes/vector2")
 ---@field private _hovered boolean
 ---@field private _clicked boolean
 ---@field Clicked Event
+---@field Unclicked Event
 local Button = {}
 Button.__index = Button
 --most of this module was taken from here: https://github.com/bncastle/love2d-tutorial/blob/Episode15/lib/ui/Button.lua
