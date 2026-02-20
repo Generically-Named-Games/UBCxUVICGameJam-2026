@@ -40,6 +40,7 @@ local shop = Shop.new(onTowerSelected)
 --Load in the map and whether its layers are visible
 function love.load()
 	love.window.setMode(960, 640)
+	love.window.setTitle("Selective Gardening")
 
 	Game:CreatePauseButton()
 
