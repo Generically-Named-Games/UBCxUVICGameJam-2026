@@ -77,15 +77,15 @@ function Button:update(dt)
 		if clicking and not self._clicked then
 			self._clicked = true
 			self.Clicked:Invoke()
-		elseif not clicking and self._clicked then
-			self._clicked = false
-			self.Unclicked:Invoke()
+		-- elseif not clicking and self._clicked then
+		-- 	self._clicked = false
+		-- 	self.Unclicked:Invoke()
 		else
 			print("in bounds! doing nothing! woah!")
 			--self.Hovered:Invoke()
 		end
 	else
-		if not clicking and self._clicked then
+		if clicking and self._clicked then
 			self._clicked = false
 			self.Unclicked:Invoke()
 		end

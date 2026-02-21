@@ -7,6 +7,7 @@ local Button = require("ui/button")
 ---@field RoundStatus "Paused" | "Ongoing" | "Dead"
 ---@field private _currency number
 ---@field private _pause Button?
+---@field private _health number
 local Game = {}
 Game.__index = Game
 
@@ -21,6 +22,7 @@ function Game.new()
 	-- PRIVATE
 	instance._currency = 500
 	instance._pause = nil
+	instance._health = 100
 
 	return instance
 end
@@ -31,19 +33,28 @@ function Game:AddCurrency(dc)
 	self._currency = self._currency + dc
 end
 
+function Game:GetCurrency()
+	return self._currency
+end
+
 ---@param dt number
 function Game:update(dt)
 	if self.RoundStatus == "Ongoing" then
 		self.TimeSinceRoundStarted = self.TimeSinceRoundStarted + dt
 
 		for _, t in ipairs(self.ActiveTowers) do
-			t:update(dt, self.ActiveEnemies)
+			t:update(dt, self.ActiveEnemies, CARD_ACTIVE)
 		end
 		for _, e in ipairs(self.ActiveEnemies) do
 			e:update(dt)
 		end
 	end
 	self._pause:update(dt)
+
+	-- crashes the game on death
+	if self._health <= 0 then
+		love.event.quit()
+	end
 end
 
 function Game:draw()
@@ -51,7 +62,8 @@ function Game:draw()
 
 	local screenWidth = love.graphics.getWidth()
 	local screenHeight = love.graphics.getHeight()
-	love.graphics.print("Currency: " .. tostring(self._currency), screenWidth - 128 - 50, screenHeight - 128 - 100)
+	love.graphics.print("Currency: " .. tostring(self:GetCurrency()), screenWidth - 128 - 50, screenHeight - 128 - 100)
+	love.graphics.print("Health: " .. tostring(self:GetHealth()), screenWidth - 128 - 50, screenHeight - 128 - 120)
 end
 
 function Game:drawEntities()
@@ -90,9 +102,14 @@ function Game:CreatePauseButton()
 	end)
 end
 
-function Game:CreateBuyTowerButton()
-	local screenWidth = love.graphics.getWidth()
-	local screenHeight = love.graphics.getHeight()
+---Applies damage by decreasing game health
+---@param dmg number
+function Game:Damage(dmg)
+	self._health = self._health - dmg
+end
+
+function Game:GetHealth()
+	return self._health
 end
 
 return Game.new()
