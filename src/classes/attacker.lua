@@ -68,21 +68,22 @@ function Attacker:update(dt)
 
 		if self.AnimTimer >= frameDuration then
 			self.AnimTimer = 0
-			if self.AnimTimer == 1 then
-				self.AnimTimer = 2
+			if self.AnimFrame == 1 then
+				self.AnimFrame = 2
 			else
-				self.AnimTimer = 1
+				self.AnimFrame = 1
 			end
 		end
 	else
 		self.EndPoint = self.EndPoint + 1
 
 		local next = self.Path[self.EndPoint]
-		local dx = next.x - self.Position.X
-		local dy = next.y - self.Position.Y
-		local angle = math.atan2(dy, dx)
-
-		self.rotation = math.floor((angle / (math.pi / 2)) + 0.5) * (math.pi / 2) + math.pi / 2
+		if next then
+			local dx = next.x - self.Position.X
+			local dy = next.y - self.Position.Y
+			local angle = math.atan2(dy, dx)
+			self.rotation = math.floor((angle / (math.pi / 2)) + 0.5) * (math.pi / 2) + math.pi / 2
+		end
 	end
 end
 

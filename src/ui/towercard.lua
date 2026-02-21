@@ -5,19 +5,22 @@ local Button = require("/ui/button")
 ---@field Visible boolean
 ---@field ModeButtons table
 ---@field SellButton Button
+---@field GraftButton Button
+---@field IsGrafting boolean
 local TowerCard = {}
 TowerCard.__index = TowerCard
 
 local CARD_HEIGHT = 120
-local MODES = { "first", "last", "closest", "strongest", "weakest" }
+local CARD_WIDTH = 400
+local MODES = { "first", "last", "close", "strong", "weak" }
 
 local screenWidth = love.graphics.getWidth()
 local screenHeight = love.graphics.getHeight()
 local cardPositionY = screenHeight - CARD_HEIGHT
 
-local STATS_X = 120
-local MODES_X = 400
-local SELL_X = 700
+local STATS_X = 10
+local MODES_X = 130
+local SELL_X = 310
 
 function TowerCard.new()
 	local instance = setmetatable({}, TowerCard)
@@ -47,6 +50,16 @@ function TowerCard.new()
 			instance.Tower = nil
 		end
 	end)
+
+	instance.IsGrafting = false
+	instance.GraftButton = Button.new(SELL_X + 40, screenHeight - CARD_HEIGHT + 25, 80, 24, "")
+	instance.GraftButton.Clicked:Connect(function()
+		if instance.Tower then
+			instance.IsGrafting = not instance.IsGrafting -- toggle graft mode
+			print("Graft mode:", instance.IsGrafting)
+		end
+	end)
+
 	return instance
 end
 
@@ -70,8 +83,16 @@ function TowerCard:update(dt, activeTowers)
 		mode.button:update(dt)
 	end
 	self.SellButton:update(dt)
+	self.GraftButton:update(dt)
 end
 
+function TowerCard:containsPoint(x, y)
+	if not self.Tower then
+		return false
+	end
+
+	return x >= 0 and x <= CARD_WIDTH and y >= screenHeight - CARD_HEIGHT and y <= screenHeight
+end
 function TowerCard:draw()
 	if not self.Tower then
 		return
@@ -80,9 +101,9 @@ function TowerCard:draw()
 
 	-- background and border
 	love.graphics.setColor(0.1, 0.1, 0.06, 0.95)
-	love.graphics.rectangle("fill", 0, cardPositionY, screenWidth, CARD_HEIGHT)
+	love.graphics.rectangle("fill", 0, cardPositionY, CARD_WIDTH, CARD_HEIGHT)
 	love.graphics.setColor(0.35, 0.62, 0.22)
-	love.graphics.rectangle("fill", 0, cardPositionY, screenWidth, 2)
+	love.graphics.rectangle("fill", 0, cardPositionY, CARD_WIDTH, 2)
 
 	-- stats and name
 	love.graphics.setColor(0.56, 0.83, 0.35)
@@ -126,6 +147,31 @@ function TowerCard:draw()
 	love.graphics.rectangle("line", sb.Position.X - sb.Size.X / 2, sb.Position.Y - sb.Size.Y / 2, sb.Size.X, sb.Size.Y)
 	love.graphics.setColor(0.75, 0.35, 0.22)
 	love.graphics.print("SELL", sb.Position.X - 10, sb.Position.Y - 6)
+
+	local gb = self.GraftButton
+	local graftActive = self.IsGrafting
+	love.graphics.setColor(graftActive and 0.06 or 0.04, graftActive and 0.18 or 0.08, graftActive and 0.06 or 0.04)
+	love.graphics.rectangle(
+		"fill",
+		gb.Position.X - gb.Size.X / 2,
+		gb.Position.Y - gb.Size.Y / 2,
+		gb.Size.X,
+		gb.Size.Y,
+		4,
+		4
+	)
+	love.graphics.setColor(graftActive and 0.56 or 0.23, graftActive and 0.83 or 0.45, 0.22)
+	love.graphics.rectangle(
+		"line",
+		gb.Position.X - gb.Size.X / 2,
+		gb.Position.Y - gb.Size.Y / 2,
+		gb.Size.X,
+		gb.Size.Y,
+		4,
+		4
+	)
+	love.graphics.setColor(graftActive and 0.56 or 0.45, graftActive and 0.83 or 0.65, 0.22)
+	love.graphics.print("GRAFT", gb.Position.X - 12, gb.Position.Y - 6)
 
 	love.graphics.setColor(1, 1, 1, 1)
 end

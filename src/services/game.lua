@@ -43,7 +43,7 @@ function Game:update(dt)
 		self.TimeSinceRoundStarted = self.TimeSinceRoundStarted + dt
 
 		for _, t in ipairs(self.ActiveTowers) do
-			t:update(dt, self.ActiveEnemies)
+			t:update(dt, self.ActiveEnemies, CARD_ACTIVE)
 		end
 		for _, e in ipairs(self.ActiveEnemies) do
 			e:update(dt)

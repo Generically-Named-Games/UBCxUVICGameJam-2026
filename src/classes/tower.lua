@@ -112,16 +112,6 @@ function Tower:findTarget(activeEnemies) -- modes need to be tested
 					worstDistance = pathDistance
 					bestTarget = target
 				end
-			elseif mode == "first" then
-				if not bestDistance or bestDistance > pathDistance then
-					bestDistance = pathDistance
-					bestTarget = target
-				end
-			elseif mode == "last" then
-				if not worstDistance or worstDistance < pathDistance then
-					worstDistance = pathDistance
-					bestTarget = target
-				end
 			end
 		end
 	end
@@ -173,10 +163,10 @@ end
 ---Update loop for tower
 ---@param dt number
 ---@param activeEnemies Attacker[]
-function Tower:update(dt, activeEnemies)
+function Tower:update(dt, activeEnemies, cardActive)
 	self.AnimTimer = self.AnimTimer + dt
 	if self.AnimTimer >= 0.1 then -- show frame 2 for 0.1s then snap back
-		self.animFrame = 1
+		self.AnimFrame = 1
 	end
 
 	self.AttackTimer = self.AttackTimer + dt
@@ -186,8 +176,9 @@ function Tower:update(dt, activeEnemies)
 		self:attack(target)
 		self.AttackTimer = 0
 	end
-
-	self.Button:update(dt)
+	if not cardActive then --makes sure you cant click through card
+		self.Button:update(dt)
+	end
 end
 
 function Tower:remove() --just makes a flag so it can be cleaned up in the update loop
@@ -219,6 +210,13 @@ function Tower:draw() --temporary placeholder
 
 		love.graphics.setColor(1, 1, 1, 0.5)
 		love.graphics.circle("line", self.ScreenPosition.X, self.ScreenPosition.Y, self.Stats.range * SCALE_X)
+	end
+
+	if GRAFT_MODE and self ~= GRAFTING_TOWER then
+		love.graphics.setColor(0.3, 0.8, 0.3, 0.4)
+		love.graphics.circle("fill", self.ScreenPosition.X, self.ScreenPosition.Y, 24)
+		love.graphics.setColor(0.3, 0.8, 0.3, 0.9)
+		love.graphics.circle("line", self.ScreenPosition.X, self.ScreenPosition.Y, 24)
 	end
 
 	love.graphics.setColor(1, 1, 1, 1)

@@ -1,8 +1,8 @@
 local towers = { --holds all the tower templates and probably the upgrade stats as well
-	vine = { --placeholder tower
-		name = "vine",
+	basic = { --placeholder tower
+		name = "basic",
 		cost = 100,
-		range = 100,
+		range = 30,
 		attack = 10,
 		cooldown = 0.5,
 		sprites = {
@@ -12,8 +12,8 @@ local towers = { --holds all the tower templates and probably the upgrade stats 
 	},
 	long_range = {
 		name = "long_range",
-		cost = 150,
-		range = 200,
+		cost = 200,
+		range = 60,
 		attack = 8,
 		cooldown = 0.8,
 		sprites = {
@@ -23,9 +23,9 @@ local towers = { --holds all the tower templates and probably the upgrade stats 
 	},
 	purple = { --maybe a graft
 		name = "purple",
-		cost = 175,
-		range = 120,
-		attack = 15, --maybe add a dot
+		cost = 400,
+		range = 45,
+		attack = 50, --maybe add a dot
 		cooldown = 1.0,
 		sprites = {
 			"assets/images/purple_plant1.png",
